@@ -1,0 +1,7 @@
+/* In your CSS or Tailwind CSS configuration file */
+.shadow-inner {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent 0%, transparent 100%);
+}

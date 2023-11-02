@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  userName: {
+  email: {
     type: String,
     required: true,
     unique: true,
@@ -12,14 +12,10 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["admin", "reviewer", "user"], //user category for student and guide
     required: true,
   },
-  permission: {
-    projects: {
-      view: String, // all or own
-      create: Boolean,
-    },
+  projectNumber: {
+    type: String,
   },
 });
 

@@ -1,19 +1,23 @@
 const express = require("express");
 const router = express.Router();
-const { loginUser } = require("../controllers/userController");
+const loginUser = require("../controllers/userController");
 
 // Route to login and generate a JWT token
 router.post("/", async (req, res) => {
   try {
-    const { userName, password } = req.body;
+    const { email, password } = req.body;
 
     // Call the loginUser function
-    const { token, role, permission } = await loginUser(userName, password);
+    const result = await loginUser(email, password);
 
-    // Send the JWT token as response
-    res.status(200).json({ token, role, permission });
+    if (result.token) {
+      res.status(200).json({ token: result.token, role: result.role });
+    } else {
+      res.status(401).json({ message: "Authentication failed" });
+    }
   } catch (error) {
-    res.status(401).json({ message: "Invalid Credentails" });
+    console.log(error);
+    res.status(500).json({ message: "Internal server Error" });
   }
 });
 

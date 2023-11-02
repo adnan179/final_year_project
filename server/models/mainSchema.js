@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-//rules for student data
 const studentSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -29,9 +28,18 @@ const studentSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  projectNumber: {
+    type: String,
+    required: true,
+  },
+  projects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
+  ],
 });
 
-//rules for guide data
 const guideSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -57,9 +65,18 @@ const guideSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  projectNumber: {
+    type: String,
+    required: true,
+  },
+  projects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+    },
+  ],
 });
 
-//rules for project data
 const projectSchema = new mongoose.Schema({
   projectNumber: {
     type: String,
@@ -78,11 +95,18 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  team: [studentSchema],
-  guide: [guideSchema],
+  team: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+    },
+  ],
+  guide: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Guide",
+  },
 });
 
-//validating project if there have at least three students per team and max 4 students per project
 projectSchema.path("team").validate(function (value) {
   return value.length >= 3 && value.length <= 4;
 }, "A project must have 3 to 4 team members.");
