@@ -19,6 +19,8 @@ const signupRoute = require("./routes/admin routes/signupRoute");
 const reviewerRoute = require("./routes/admin routes/reviewerRoute");
 const guideRoute = require("./routes/guideRoute");
 const studentRoute = require("./routes/studentRoute");
+const announcementRoute = require("./routes/announcementsRoute");
+const fileRoute = require("./routes/filesRoute");
 
 //use route modules
 app.use("/projects", projectsRoute);
@@ -30,6 +32,8 @@ app.use("/login", loginRoute);
 app.use("/reviewers", reviewerRoute);
 app.use("/guide", guideRoute);
 app.use("/student", studentRoute);
+app.use("/announcements", announcementRoute);
+app.use("/files", fileRoute);
 
 mongoose
   .connect(process.env.MONGODB_URI, {

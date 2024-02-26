@@ -28,16 +28,15 @@ const studentSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  projectNumber: {
-    type: String,
-    required: true,
-  },
-  projects: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
+  projects: {
+    type: Array,
+    validate: {
+      validator: function (array) {
+        return array.length <= 1;
+      },
+      message: "Projects array must have at most 1 elements.",
     },
-  ],
+  },
 });
 
 const guideSchema = new mongoose.Schema({
@@ -65,16 +64,15 @@ const guideSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  projectNumber: {
-    type: String,
-    required: true,
-  },
-  projects: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
+  projects: {
+    type: Array,
+    validate: {
+      validator: function (array) {
+        return array.length <= 2;
+      },
+      message: "Projects array must have at most 2 elements.",
     },
-  ],
+  },
 });
 
 const projectSchema = new mongoose.Schema({
@@ -95,21 +93,44 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  team: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-    },
-  ],
+  student1: {
+    type: String,
+    ref: "Student",
+  },
+  student2: {
+    type: String,
+    ref: "Student",
+  },
+  student3: {
+    type: String,
+    ref: "Student",
+  },
+  student4: {
+    type: String,
+    ref: "Student",
+  },
   guide: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "Guide",
   },
+  reviewer: {
+    type: Array,
+    validate: {
+      validator: function (array) {
+        return array.length <= 1;
+      },
+      message: "Reviewer array must have at most 1 element.",
+    },
+  },
+  reviewDate: {
+    type: Object,
+    default: null,
+  },
+  firebaseFolder: {
+    type: String,
+    required: true,
+  },
 });
-
-projectSchema.path("team").validate(function (value) {
-  return value.length >= 3 && value.length <= 4;
-}, "A project must have 3 to 4 team members.");
 
 const Project = mongoose.model("Project", projectSchema);
 const Guide = mongoose.model("Guide", guideSchema);

@@ -65,7 +65,7 @@ const ReviewerProjectCards = () => {
         <div className="flex flex-col gap-2">
           <div>
             <select
-              className="px-2 py-1 bg-white text-md rounded shadow-2xl font-sanista"
+              className="px-2 py-1 bg-[#E5DFDF]  text-md rounded shadow-lg font-sanista"
               onChange={(e) => setSearchCategory(e.target.value)}
               value={searchCategory}
             >
@@ -75,19 +75,19 @@ const ReviewerProjectCards = () => {
             </select>
           </div>
           <div className="flex flex-row">
-            <div className="w-[400px] relative shadow-2xl rounded-md">
+            <div className="w-[400px] relative">
               <input
                 type="text"
                 placeholder="search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="absolute w-full font-sanista text-xl text-white flex px-4 py-2 rounded-lg bg-gradient-to-r from-transparent via-gray-600 to-transparent 
-                shadow-inner focus:ring-blue-500 focus:ring-2 outline-none"
+                className="absolute w-full font-sanista text-md text-black flex px-4 py-2 rounded-lg bg-[#E5DFDF] 
+                shadow focus:ring-[#981F2A] focus:ring-2 outline-none"
               />
             </div>
             <button
               onClick={searchProjects}
-              className="px-6 py-2 font-sanista font-semibold bg-white rounded shadow-2xl text-xl"
+              className="px-6 py-2 font-sanista font-semibold bg-[#E5DFDF]  rounded shadow-lg text-md"
             >
               Search
             </button>
@@ -98,7 +98,7 @@ const ReviewerProjectCards = () => {
         {projects &&
           projects.map((project) => (
             <Link to={`${project.projectNumber}`} key={project.projectNumber}>
-              <div className="w-[400px] h-[4rem] flex flex-row justify-between items-center px-5 border bg-white shadow-xl rounded-lg">
+              <div className="w-[400px] h-[4rem] flex flex-row justify-between items-center px-5 border bg-[#E5DFDF]  shadow-xl rounded-lg">
                 <h2 className="text-[25px] font-semibold font-poppins">
                   {project.projectNumber}
                 </h2>

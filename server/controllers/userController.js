@@ -7,10 +7,10 @@ process.env["DEBUG"] = "jsonwebtoken";
 //login and generating JWT token
 const loginUser = async (email, password) => {
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email });
     //if no user found, throw an error
     if (!user) {
-      throw new Error("Invalid Details!");
+      throw new Error("Invalid user!");
     }
 
     if (password !== user.password) {

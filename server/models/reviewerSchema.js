@@ -1,36 +1,10 @@
 const mongoose = require("mongoose");
 
 const reviewerSchema = new mongoose.Schema({
-  // Login details
   email: {
     type: String,
     required: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
-
-  // Role of the user (admin, user, reviewer, etc.)
-  role: {
-    type: String,
-    required: true,
-    enum: ["admin", "user", "reviewer"],
-  },
-
-  // Permissions
-  permissions: {
-    createProjects: {
-      type: Boolean,
-      default: false,
-    },
-    viewProjects: {
-      type: Boolean,
-      default: true,
-    },
-  },
-
-  // Other reviewer details
   name: {
     type: String,
     required: true,
@@ -48,9 +22,22 @@ const reviewerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  projectsHandling: {
+  domains: {
+    type: Array,
+    required: true,
+  },
+  designation: {
     type: String,
     required: true,
+  },
+  projects: {
+    type: Array,
+    validate: {
+      validator: function (array) {
+        return array.length <= 2;
+      },
+      message: "Projects array must have at most 2 elements.",
+    },
   },
 });
 

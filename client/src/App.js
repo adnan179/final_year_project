@@ -1,69 +1,76 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-// Import your pages/components here
-//admin pages/components
+import { Toaster } from "react-hot-toast";
+//login page import
+import LoginPage from "./pages/loginPage";
+//admin pages import
 import ProjectPage from "./pages/admin pages/projectPage";
-import ReviewerPage from "./pages/admin pages/reviewerPage";
 import ProjectDetails from "./components/admin/projectDetails";
 import ProjectDetailsForm from "./components/admin/projectForm";
-import LoginPage from "./pages/loginPage";
-import GuideDetails from "./components/admin/guideDetails";
-import StudentDetails from "./components/admin/studentDetails";
-import ReviewerForm from "./components/admin/reviewerForm";
+import ReviewerPage from "./pages/admin pages/reviewerPage";
+import ReviewDatesForm from "./pages/admin pages/reviewDatesForm";
 import AnnouncementsPage from "./pages/admin pages/announcementsPage";
-import AdminDashboard from "./pages/admin pages/adminDashboard";
-
-//reviewers pages/components
-import ReviewerDashboard from "./pages/reviewer pages/reviewerDashboard";
+import AnnouncementAdminForm from "./components/admin/announcmentAdminForm";
+//reviewer pages import
 import ReviewerProjectPage from "./pages/reviewer pages/reviewerProjectPage";
-import ReviewerDetails from "./components/admin/reviewerDetails";
-//user's pages/components
-import StudentDashboard from "./pages/users pages/studentDashboard";
-import GuideDashboard from "./pages/users pages/guideDashboard";
+import AnnouncementsReviewerPage from "./pages/reviewer pages/announcementsReviewerPage";
+//user pages import
+import Dashboard from "./pages/users pages/dashboard";
+import AnnouncementsUserPage from "./pages/users pages/announcementsUserPage";
+
+import axios from "axios";
+import ReviewerForm from "./components/admin/reviewerForm";
+import ReviewerProjectDetails from "./components/reviewers/reviewerProjectDetails";
+import AssignedProjectsPage from "./pages/reviewer pages/assignedProjects";
 
 const App = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simulate user login and role here
-  // Replace this with your actual authentication mechanism
+  //fetching token from localstorage
   useEffect(() => {
-    // Check if the user is authenticated and set user data
-    // Example: Check if a token is in local storage and decode it
     const token = localStorage.getItem("token");
     if (token) {
-      // Decode the token and set user data (e.g., user role)
-      const decodedToken = decodeToken(token);
-      setUser(decodedToken);
+      decodeToken(token);
+    } else {
+      setIsLoading(false);
     }
-    setIsLoading(false); // Set loading to false when user data is retrieved
   }, []);
 
-  // Function to decode the JWT token
-  const decodeToken = (token) => {
-    // Replace this with your JWT decoding logic
-    // This is just a simplified example
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace("-", "+").replace("_", "/");
-    return JSON.parse(atob(base64));
+  // decoding token
+  const decodeToken = async (token) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get("http://localhost:4000/login/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const { email, role } = response.data;
+      setUser({ email, role });
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      setIsLoading(false);
+    }
   };
 
+  //checking if the user has the requirements to access a particular route
   const ProtectedRoute = ({ element, requiredRole }) => {
     if (isLoading) {
-      // If still loading, show a loading message or spinner
-      return <div>Loading...</div>;
+      return (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-100">
+          <div className="flex flex-col p-16 bg-white gap-3 rounded-xl shadow shadow-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#981F2A]"></div>
+          </div>
+        </div>
+      );
     }
 
     if (!user) {
-      // User not authenticated, redirect to login page
       return <Navigate to="/" />;
     }
 
-    const role = user?.role;
-    if (requiredRole && role !== requiredRole) {
-      // User doesn't have the required role, handle this as needed (e.g., show an error message)
-      return <div>You don't have permission to access this page.</div>;
+    if (user.role !== requiredRole) {
+      return <Navigate to="/" />;
     }
 
     return element;
@@ -71,16 +78,11 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      {/* toaster */}
+      <Toaster position="top-left" />
+      {/* admin routes */}
       <Routes>
-        {/* login Route */}
         <Route path="/" element={<LoginPage />} />
-        {/* Admin Routes */}
-        <Route
-          path="/:adminEmail/admin-dashboard"
-          element={
-            <ProtectedRoute element={<AdminDashboard />} requiredRole="admin" />
-          }
-        />
         <Route
           path="/:adminEmail/admin-dashboard/projects"
           element={
@@ -94,21 +96,22 @@ const App = () => {
           }
         />
         <Route
-          path="/:adminEmail/admin-dashboard/projects/:projectNumber/guide/:guideEmployeeId"
-          element={
-            <ProtectedRoute element={<GuideDetails />} requiredRole="admin" />
-          }
-        />
-        <Route
-          path="/:adminEmail/admin-dashboard/projects/:projectNumber/student/:studentRollnumber"
-          element={
-            <ProtectedRoute element={<StudentDetails />} requiredRole="admin" />
-          }
-        />
-        <Route
           path="/:adminEmail/admin-dashboard/projects/form"
-          element={<ProtectedRoute element={<ProjectDetailsForm />} />}
-          requiredRole="admin"
+          element={
+            <ProtectedRoute
+              element={<ProjectDetailsForm />}
+              requiredRole="admin"
+            />
+          }
+        />
+        <Route
+          path="/:adminEmail/admin-dashboard/projects/reviewDates"
+          element={
+            <ProtectedRoute
+              element={<ReviewDatesForm />}
+              requiredRole="admin"
+            />
+          }
         />
         <Route
           path="/:adminEmail/admin-dashboard/reviewers"
@@ -116,15 +119,7 @@ const App = () => {
             <ProtectedRoute element={<ReviewerPage />} requiredRole="admin" />
           }
         />
-        <Route
-          path="/:adminEmail/admin-dashboard/reviewers/:reviewerEmployeeId"
-          element={
-            <ProtectedRoute
-              element={<ReviewerDetails />}
-              requiredRole="admin"
-            />
-          }
-        />
+
         <Route
           path="/:adminEmail/admin-dashboard/reviewers/form"
           element={
@@ -140,18 +135,16 @@ const App = () => {
             />
           }
         />
-
-        {/* Reviewer routes */}
         <Route
-          path="/:reviewerEmail/reviewer-dashboard"
+          path="/:adminEmail/admin-dashboard/announcements/form"
           element={
             <ProtectedRoute
-              element={<ReviewerDashboard />}
-              requiredRole="reviewer"
+              element={<AnnouncementAdminForm />}
+              requiredRole="admin"
             />
           }
         />
-
+        {/* Reviewer routes */}
         <Route
           path="/:reviewerEmail/reviewer-dashboard/projects"
           element={
@@ -161,21 +154,47 @@ const App = () => {
             />
           }
         />
-
-        {/* user's routes */}
         <Route
-          path="/:userEmail/user-dashboard"
+          path="/:reviewerEmail/reviewer-dashboard/projects/:projectNumber"
           element={
             <ProtectedRoute
-              element={<StudentDashboard />}
-              requiredRole="user"
+              element={<ReviewerProjectDetails />}
+              requiredRole="reviewer"
             />
           }
         />
         <Route
+          path="/:reviewerEmail/reviewer-dashboard/projectsAssigned"
+          element={
+            <ProtectedRoute
+              element={<AssignedProjectsPage />}
+              requiredRole="reviewer"
+            />
+          }
+        />
+        <Route
+          path="/:reviewerEmail/reviewer-dashboard/announcements"
+          element={
+            <ProtectedRoute
+              element={<AnnouncementsReviewerPage />}
+              requiredRole="reviewer"
+            />
+          }
+        />
+        {/* user routes */}
+        <Route
           path="/:userEmail/user-dashboard"
           element={
-            <ProtectedRoute element={<GuideDashboard />} requiredRole="user" />
+            <ProtectedRoute element={<Dashboard />} requiredRole="user" />
+          }
+        />
+        <Route
+          path="/:userEmail/user-dashboard/announcements"
+          element={
+            <ProtectedRoute
+              element={<AnnouncementsUserPage />}
+              requiredRole="user"
+            />
           }
         />
       </Routes>

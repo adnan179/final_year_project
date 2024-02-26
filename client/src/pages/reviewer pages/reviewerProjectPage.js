@@ -4,7 +4,7 @@ import ReviewerProjectCards from "../../components/reviewers/reviewerProjectCard
 
 const ReviewerProjectPage = () => {
   return (
-    <div className="flex flex-row w-full h-screen bg-gradient-to-r from-[#111111] to-[#2C3E50]">
+    <div className="flex flex-row w-full h-screen">
       <div className="flex w-[20%] h-screen">
         <ReviewerSidebar />
       </div>

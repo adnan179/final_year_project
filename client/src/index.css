@@ -3,3 +3,14 @@
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Sansita:ital,wght@0,400;0,700;1,400&display=swap");
+
+.student-container {
+  display: flex;
+  width: 6rem;
+  height: 6rem;
+
+  border-radius: 0.25rem;
+  justify-content: center;
+  align-items: center;
+  background-color: #981f2a;
+}

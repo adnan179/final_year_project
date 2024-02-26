@@ -6,11 +6,11 @@ import ReviewerCard from "../../components/admin/reviewerCard";
 
 const ReviewerPage = () => {
   return (
-    <div className="flex flex-row w-full h-screen bg-gradient-to-r from-[#111111] to-[#2C3E50]">
+    <div className="flex flex-row w-full min-h-screen overflow-y-hidden">
       <div className="flex w-[20%] h-screen">
         <AdminSidebar />
       </div>
-      <div className="flex w-[80%] h-screen">
+      <div className="flex w-[80%] h-screen overflow-y-auto">
         <ReviewerCard />
       </div>
     </div>
