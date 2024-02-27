@@ -4,13 +4,13 @@ const { getFirestore } = require("firebase/firestore");
 const { getStorage } = require("firebase/storage");
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBaKWLxti63LzrXzkkqCjNjw8NW6iYYN78",
-  authDomain: "project-management-de25a.firebaseapp.com",
-  projectId: "project-management-de25a",
-  storageBucket: "project-management-de25a.appspot.com",
-  messagingSenderId: "855694484040",
-  appId: "1:855694484040:web:c4266b7629cbe79d406e7d",
-  measurementId: "G-KGGMDS2PV9",
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGE_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
