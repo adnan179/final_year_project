@@ -144,6 +144,14 @@ const ReviewerForm = () => {
                   </option>
                 ))}
             </select>
+            {selectedProject && (
+              <p className="text-white text-md">
+                Project domain is:{" "}
+                <span className="text-red-600 font-medium">
+                  {selectedProject.domain}
+                </span>
+              </p>
+            )}
           </div>
           <div className="mt-7">
             <h1 className="text-xl text-white font-sanista">Select Reviewer</h1>
@@ -158,7 +166,8 @@ const ReviewerForm = () => {
                 {projects &&
                   reviewersData.map((reviewer) => (
                     <option value={reviewer._id} key={reviewer._id}>
-                      {reviewer.name}-{reviewer.employeeId}
+                      {reviewer.name}-{reviewer.employeeId}-
+                      {reviewer && reviewer.domains.map((d) => <p>{d} </p>)}
                     </option>
                   ))}
               </select>
