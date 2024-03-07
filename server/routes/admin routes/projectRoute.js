@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { Project, Guide, Student } = require("../../models/mainSchema");
 const User = require("../../models/userSchema");
+const Reviewer = require("../../models/reviewerSchema");
 const mongoose = require("mongoose");
 const { generateRandomPassword, logger } = require("../../utils/utils.js");
 const { firestore } = require("../../config/firebase-config.js");
-const { collection, doc, setDoc, deleteDoc } = require("firebase/firestore");
+const { collection, doc, deleteDoc } = require("firebase/firestore");
 
 // POST a new project
 router.post("/", async (req, res) => {
@@ -258,17 +259,23 @@ router.get("/by-guide/:guideName", async (req, res) => {
 
 //route to delete project
 router.delete("/:projectNumber", async (req, res) => {
+  let session;
+
   try {
+    session = await mongoose.startSession();
+    session.startTransaction();
+
     const { projectNumber } = req.params;
-    const project = await Project.findOne({
-      projectNumber: projectNumber,
-    });
+    const project = await Project.findOne({ projectNumber }).session(session);
+
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    const guide = await Guide.findOne({ employeeId: project.guide });
-    // Remove projectNumber from arrays
+    const guide = await Guide.findOne({ employeeId: project.guide }).session(
+      session
+    );
+
     if (guide && guide.projects.includes(projectNumber)) {
       guide.projects.pull(projectNumber);
       await guide.save();
@@ -279,13 +286,14 @@ router.delete("/:projectNumber", async (req, res) => {
       project.student2,
       project.student3,
     ];
+
     if (project.student4 !== "") {
       studentRollNumbers.push(project.student4);
     }
 
     const students = await Student.find({
       rollNumber: { $in: studentRollNumbers },
-    });
+    }).session(session);
 
     await Promise.all(
       students.map(async (student) => {
@@ -295,19 +303,64 @@ router.delete("/:projectNumber", async (req, res) => {
         }
       })
     );
-    await Project.findOneAndDelete({ projectNumber: projectNumber });
-    await User.findOneAndDelete({ email: guide.email });
+    const reviewer = await Reviewer.findOne({
+      employeeId: project?.reviewer[0],
+    });
+    if (reviewer) {
+      reviewer.projects.pull(projectNumber);
+      await reviewer.save();
+    }
+    // Delete Firestore collection (Firebase Storage folder) if it exists
+    // const firebaseFolderName = project.firebaseFolder;
 
+    // if (firebaseFolderName) {
+    //   const folderDocRef = doc(
+    //     collection(firestore),
+    //     firebaseFolderName.trim()
+    //   );
+    //   console.log(firestore);
+
+    //   // Attempt to get the document from the collection
+    //   try {
+    //     const docSnapshot = await getDoc(folderDocRef);
+    //     // If the document snapshot exists, delete the document
+    //     if (docSnapshot.exists()) {
+    //       await deleteDoc(folderDocRef);
+    //       console.log(`Collection ${firebaseFolderName} deleted successfully.`);
+    //     } else {
+    //       console.log(`Collection ${firebaseFolderName} does not exist.`);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error checking/deleting collection:", error);
+    //   }
+    // }
+    // Delete project document
+    await Project.findOneAndDelete({ projectNumber }).session(session);
+
+    // Delete guide user
+    await User.findOneAndDelete({ email: guide.email }).session(session);
+
+    // Delete student users
     await User.deleteMany({
       email: { $in: students.map((student) => student.email) },
-    });
+    }).session(session);
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(201).json({ message: "Successfully deleted" });
   } catch (error) {
-    console.log("error deleting the project", error);
+    logger.error("Error deleting the project", error);
+
+    if (session) {
+      await session.abortTransaction();
+      session.endSession();
+    }
+
+    res.status(500).json({ message: "Internal server error" });
   }
 });
-
 //route to edit/update the review dates for the projects
 router.post("/update-review-dates", async (req, res) => {
   try {
@@ -320,6 +373,27 @@ router.post("/update-review-dates", async (req, res) => {
   } catch (error) {
     console.error("Error updating review dates:", error);
     res.status(500).send("An error occurred while updating review dates.");
+  }
+});
+
+//router to update the feedbacks
+router.post("/:projectNumber/feedback", async (req, res) => {
+  try {
+    const projectNumber = req.params.projectNumber;
+    const feedText = req.body.feedText;
+    if (!projectNumber) {
+      return res.status(400).json({ message: "projectNumber is required" });
+    }
+    const project = await Project.findOne({ projectNumber: projectNumber });
+    if (!project) {
+      return res.status(404).json({ message: "Project not found!!" });
+    }
+    project.Feedbacks.push(feedText);
+    await project.save();
+    res.status(200).json({ message: "Feedback submitted successfully" });
+  } catch (err) {
+    console.log("Error updating feedback", err);
+    res.status(500).message(err.message);
   }
 });
 

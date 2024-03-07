@@ -11,17 +11,18 @@ import ReviewerPage from "./pages/admin pages/reviewerPage";
 import ReviewDatesForm from "./pages/admin pages/reviewDatesForm";
 import AnnouncementsPage from "./pages/admin pages/announcementsPage";
 import AnnouncementAdminForm from "./components/admin/announcmentAdminForm";
+import ReviewerForm from "./components/admin/reviewerForm";
 //reviewer pages import
 import ReviewerProjectPage from "./pages/reviewer pages/reviewerProjectPage";
 import AnnouncementsReviewerPage from "./pages/reviewer pages/announcementsReviewerPage";
+import ReviewerProjectDetails from "./components/reviewers/reviewerProjectDetails";
+import AssignedProjectsPage from "./pages/reviewer pages/assignedProjects";
+import ReviewerAssignedtDetails from "./components/reviewers/reviewerAssignedDetails";
 //user pages import
 import Dashboard from "./pages/users pages/dashboard";
 import AnnouncementsUserPage from "./pages/users pages/announcementsUserPage";
 
 import axios from "axios";
-import ReviewerForm from "./components/admin/reviewerForm";
-import ReviewerProjectDetails from "./components/reviewers/reviewerProjectDetails";
-import AssignedProjectsPage from "./pages/reviewer pages/assignedProjects";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -163,11 +164,21 @@ const App = () => {
             />
           }
         />
+
         <Route
           path="/:reviewerEmail/reviewer-dashboard/projectsAssigned"
           element={
             <ProtectedRoute
               element={<AssignedProjectsPage />}
+              requiredRole="reviewer"
+            />
+          }
+        />
+        <Route
+          path="/:reviewerEmail/reviewer-dashboard/projectsAssigned/:projectNumber"
+          element={
+            <ProtectedRoute
+              element={<ReviewerAssignedtDetails />}
               requiredRole="reviewer"
             />
           }

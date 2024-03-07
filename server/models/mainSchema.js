@@ -37,6 +37,24 @@ const studentSchema = new mongoose.Schema({
       message: "Projects array must have at most 1 elements.",
     },
   },
+  review1: {
+    totalMarks: {
+      type: Number,
+      default: 0,
+    },
+  },
+  review2: {
+    totalMarks: {
+      type: Number,
+      default: 0,
+    },
+  },
+  review3: {
+    totalMarks: {
+      type: Number,
+      default: 0,
+    },
+  },
 });
 
 const guideSchema = new mongoose.Schema({
@@ -129,6 +147,10 @@ const projectSchema = new mongoose.Schema({
   firebaseFolder: {
     type: String,
     required: true,
+  },
+  Feedbacks: {
+    type: Array,
+    default: [],
   },
 });
 

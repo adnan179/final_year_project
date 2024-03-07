@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import AdminSidebar from "./adminSidebar";
 import { BlackLeftArrow } from "../../lib/leftArrow";
 import {
-  handlePopup,
-  ConfirmationPopup,
   ReviewerPopUp,
   StudentPopup,
   GuidePopup,
+  handlePopup,
   FilePopup,
+  GradeCardPopup,
   ProjectFeedback,
 } from "../../lib/popUps";
+import ReviewerSidebar from "./reviewerSidebar";
 
-const ProjectDetails = () => {
-  const Navigate = useNavigate();
-  const { projectNumber, adminEmail } = useParams();
+const ReviewerAssignedtDetails = () => {
+  const { projectNumber, reviewerEmail } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [guide, setGuide] = useState(null);
   const [students, setStudents] = useState([]);
-  const [showConfirmation, setShowConfirmation] = useState(false); // State for controlling the confirmation pop-up
   const [reviewerPopup, setReviewerPopup] = useState(false);
   const [guidePopup, setGuidePopup] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [filePopup, setFilesPopup] = useState(false);
+  const [filesPopup, setFilesPopup] = useState(false);
+  const [gradePopup, setGradePopup] = useState(false);
   const [feedBackPopup, setFeedBackPopup] = useState(false);
 
   useEffect(() => {
@@ -39,10 +38,12 @@ const ProjectDetails = () => {
         setProject(project);
         setGuide(guide);
         setStudents(students);
+        handlePopup("successfully fetched the project information", "success");
         setLoading(false);
       })
       .catch((err) => {
         console.log("Error in fetching the project details: ", err);
+        handlePopup("error fetching the project information", "error");
         setLoading(false);
       });
   }, [projectNumber]);
@@ -52,28 +53,12 @@ const ProjectDetails = () => {
     setSelectedStudent(student);
   };
 
-  const handleDelete = async () => {
-    try {
-      setShowConfirmation(false); // Close the confirmation pop-up
-      setLoading(true);
-      await axios.delete(`http://localhost:4000/projects/${projectNumber}`);
-      console.log("Project deleted successfully.");
-      handlePopup("Project deleted successfully", "success");
-      Navigate(`/${adminEmail}/admin-dashboard/projects`);
-    } catch (error) {
-      console.log("Error deleting project: ", error);
-      handlePopup("Error deleting project", "error");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading) {
     // Display loading spinner while waiting for the form submission
     return (
       <div className="flex flex-row w-full h-screen">
         <div className="flex w-[20%] h-screen">
-          <AdminSidebar />
+          <ReviewerSidebar />
         </div>
         <div className="flex w-[80%] h-screen justify-center items-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#981F2A]"></div>
@@ -86,11 +71,11 @@ const ProjectDetails = () => {
     return (
       <div className="flex flex-row w-full h-screen">
         <div className="flex w-[20%] min-h-screen overflow-y-hidden">
-          <AdminSidebar />
+          <ReviewerSidebar />
         </div>
         <div className="flex flex-col w-[80%] h-screen py-5 px-5 justify-center items-center">
           <Link
-            to={`/${adminEmail}/admin-dashboard/projects`}
+            to={`/${reviewerEmail}/admin-dashboard/projects`}
             className="flex cursor-pointer text-[#981F2A] text-xl"
           >
             Back to projects
@@ -109,14 +94,14 @@ const ProjectDetails = () => {
   return (
     <div className="flex flex-row w-full h-screen">
       <div className="flex w-[20%] h-screen overflow-y-hidden">
-        <AdminSidebar />
+        <ReviewerSidebar />
       </div>
       {/* second cont */}
       <div className="flex flex-col w-[80%] h-screen py-2 px-5 pb-20 overflow-y-auto">
         {/* heading */}
-        <div className="flex flex-row  pt-5 pl-5 items-center">
+        <div className="flex flex-row  pt-5 pl-5 items-center gap-4">
           <Link
-            to={`/${adminEmail}/admin-dashboard/projects`}
+            to={`/${reviewerEmail}/reviewer-dashboard/projectsAssigned`}
             className="flex cursor-pointer"
           >
             <BlackLeftArrow />
@@ -125,17 +110,17 @@ const ProjectDetails = () => {
             {project.projectNumber}
           </h1>
           <button
-            onClick={() => setShowConfirmation(true)} // Set showConfirmation to true to display the confirmation pop-up
-            className="px-4 py-2 rounded-lg text-white bg-[#981F2A] font-bold ml-10 cursor-pointer"
+            onClick={() => setGradePopup(true)}
+            className="px-4 py-2 rounded shadow border border-[#981F2A] bg-white text-[#981F2A] font-medium transition duration-300 ease-in-out hover:bg-[#981F2A] hover:text-white"
           >
-            Delete
+            Grade card
           </button>
         </div>
         {/* project,guide,chat, documents */}
         <div className="flex flex-col mt-[50px] px-[50px] gap-5">
           {/* project details */}
           <div className="flex flex-row gap-10 cursor-pointer">
-            <div className="flex flex-col text-black text-xl font-medium font-poppins gap-3 w-[300px]">
+            <div className="flex flex-col text-black text-xl font-medium font-poppins gap-4 w-[300px]">
               <h2>{project.title}</h2>
               <h2>{project.domain}</h2>
               <p className="text-sm">Description:{project.description}</p>
@@ -168,7 +153,7 @@ const ProjectDetails = () => {
             {/* Guide details */}
             <div
               onClick={() => setGuidePopup(true)}
-              className="flex flex-col justify-center items-center gap-2 w-[200px] h-[250px] bg-[#E5DFDF] 
+              className="flex flex-col justify-center items-center gap-5 w-[200px] h-[250px] bg-[#E5DFDF] 
               rounded-md shadow-md cursor-pointer"
             >
               <div className="font-bold text-2xl text-black font-poppins">
@@ -179,7 +164,7 @@ const ProjectDetails = () => {
               <p className="font-medium font-poppins">{guide.employeeId}</p>
             </div>
 
-            {/* Documents and feedback*/}
+            {/* Documents and feedbacks */}
             <div className="flex flex-col gap-2">
               <div
                 onClick={() => setFilesPopup(true)}
@@ -221,14 +206,6 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
-      {/* Confirmation pop-up */}
-      {showConfirmation && (
-        <ConfirmationPopup
-          message="Are you sure you want to delete this project?"
-          onCancel={() => setShowConfirmation(false)} // Close the confirmation pop-up
-          onConfirm={handleDelete} // Call the handleDelete function on confirmation
-        />
-      )}
       {/* reviewer details pop-up */}
       {reviewerPopup && (
         <ReviewerPopUp
@@ -251,13 +228,20 @@ const ProjectDetails = () => {
         />
       )}
       {/* files popup jsx */}
-      {filePopup && (
+      {filesPopup && (
         <FilePopup
           projectNumber={project.projectNumber}
           onCancel={() => setFilesPopup(false)}
         />
       )}
-      {/* feedback popup jsx */}
+      {/* Gradecard popup JSX */}
+      {gradePopup && (
+        <GradeCardPopup
+          project={project}
+          students={students}
+          onCancel={() => setGradePopup(false)}
+        />
+      )}
       {feedBackPopup && (
         <ProjectFeedback
           project={project}
@@ -268,4 +252,4 @@ const ProjectDetails = () => {
   );
 };
 
-export default ProjectDetails;
+export default ReviewerAssignedtDetails;

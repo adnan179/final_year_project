@@ -102,4 +102,77 @@ router.get("/:userEmail/project", async (req, res) => {
   }
 });
 
+//route to update review-1 data
+router.post("/updateReview1", async (req, res) => {
+  try {
+    const review1Data = req.body;
+    // Iterate through the received data and update the database accordingly
+    for (const studentData of review1Data) {
+      const { name, totalMarks } = studentData;
+      // Find the student by name and update review1 data
+      const student = await Student.findOneAndUpdate(
+        { name: name },
+        {
+          $set: {
+            "review1.totalMarks": totalMarks,
+          },
+        },
+        { new: true }
+      );
+    }
+    res.status(200).send("Review-1 data updated successfully");
+  } catch (error) {
+    console.error("Error while updating review-1 data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+//route to update review-2 data
+router.post("/updateReview2", async (req, res) => {
+  try {
+    const review2Data = req.body;
+    // Iterate through the received data and update the database accordingly
+    for (const studentData of review2Data) {
+      const { name, totalMarks } = studentData;
+      // Find the student by name and update review1 data
+      const student = await Student.findOneAndUpdate(
+        { name: name },
+        {
+          $set: {
+            "review2.totalMarks": totalMarks,
+          },
+        },
+        { new: true }
+      );
+    }
+    res.status(200).send("Review-2 data updated successfully");
+  } catch (error) {
+    console.error("Error while updating review-2 data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+//route to update review-3 data
+router.post("/updateReview3", async (req, res) => {
+  try {
+    const review3Data = req.body;
+    // Iterate through the received data and update the database accordingly
+    for (const studentData of review3Data) {
+      const { name, totalMarks } = studentData;
+      // Find the student by name and update review1 data
+      const student = await Student.findOneAndUpdate(
+        { name: name },
+        {
+          $set: {
+            "review3.totalMarks": totalMarks,
+          },
+        },
+        { new: true }
+      );
+    }
+    res.status(200).send("Review-3 data updated successfully");
+  } catch (error) {
+    console.error("Error while updating review-3 data:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 module.exports = router;

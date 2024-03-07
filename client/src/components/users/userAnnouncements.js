@@ -75,7 +75,7 @@ const UserAnnouncements = () => {
 
       {/* Popup to display announcement details */}
       {selectedAnnouncement && (
-        <div className="fixed top-0 left-0 w-[70%] h-full flex justify-center items-center bg-black bg-opacity-50 overflow-y-auto">
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 overflow-y-auto">
           <div className="bg-white p-8 rounded-lg">
             <button
               className="sticky flex justify-center px-4 py-2 rounded font-medium bg-[#981F2A] text-white cursor-pointer transition duration-300 ease-in-out hover:scale-105"

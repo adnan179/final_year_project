@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import folder from "../../assets/blue_folder.png";
 import { BlackLeftArrow } from "../../lib/leftArrow";
 import {
-  handlePopup,
-  ConfirmationPopup,
   ReviewerPopUp,
   StudentPopup,
   GuidePopup,
+  handlePopup,
+  FilePopup,
+  ProjectFeedback,
 } from "../../lib/popUps";
 import ReviewerSidebar from "./reviewerSidebar";
 
 const ReviewerProjectDetails = () => {
-  const Navigate = useNavigate();
   const { projectNumber, reviewerEmail } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [guide, setGuide] = useState(null);
   const [students, setStudents] = useState([]);
-  const [showConfirmation, setShowConfirmation] = useState(false); // State for controlling the confirmation pop-up
   const [reviewerPopup, setReviewerPopup] = useState(false);
   const [guidePopup, setGuidePopup] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [filesPopup, setFilesPopup] = useState(false);
+  const [feedBackPopup, setFeedBackPopup] = useState(false);
 
   useEffect(() => {
     // Function to fetch the project
@@ -36,10 +36,12 @@ const ReviewerProjectDetails = () => {
         setProject(project);
         setGuide(guide);
         setStudents(students);
+        handlePopup("successfully fetched the project information", "success");
         setLoading(false);
       })
       .catch((err) => {
         console.log("Error in fetching the project details: ", err);
+        handlePopup("error fetching the project information", "error");
         setLoading(false);
       });
   }, [projectNumber]);
@@ -47,22 +49,6 @@ const ReviewerProjectDetails = () => {
   //func to select a student
   const handleStudentClick = (student) => {
     setSelectedStudent(student);
-  };
-
-  const handleDelete = async () => {
-    try {
-      setShowConfirmation(false); // Close the confirmation pop-up
-      setLoading(true);
-      await axios.delete(`http://localhost:4000/projects/${projectNumber}`);
-      console.log("Project deleted successfully.");
-      handlePopup("Project deleted successfully", "success");
-      Navigate(`/${reviewerEmail}/admin-dashboard/projects`);
-    } catch (error) {
-      console.log("Error deleting project: ", error);
-      handlePopup("Error deleting project", "error");
-    } finally {
-      setLoading(false);
-    }
   };
 
   if (loading) {
@@ -121,12 +107,6 @@ const ReviewerProjectDetails = () => {
           <h1 className="text-[40px] text-black font-poppins font-bold">
             {project.projectNumber}
           </h1>
-          <button
-            onClick={() => setShowConfirmation(true)} // Set showConfirmation to true to display the confirmation pop-up
-            className="px-4 py-2 rounded-lg text-white bg-[#981F2A] font-bold ml-10 cursor-pointer"
-          >
-            Delete
-          </button>
         </div>
         {/* project,guide,chat, documents */}
         <div className="flex flex-col mt-[50px] px-[50px] gap-5">
@@ -177,15 +157,19 @@ const ReviewerProjectDetails = () => {
             </div>
 
             {/* Documents */}
-            <div className="flex flex-col items-center cursor-pointer">
-              <img
-                src={folder}
-                alt="documents"
-                className="w-[250px] h-[250px]"
-              />
-              <h1 className="flex font-poppins font-medium text-lg text-black mt-[-40px]">
+            <div className="flex flex-col gap-2">
+              <div
+                onClick={() => setFilesPopup(true)}
+                className="flex bg-[#E5DFDF] px-4 py-2 items-center justify-start rounded font-poppins font-medium text-lg text-black"
+              >
                 Documents
-              </h1>
+              </div>
+              <div
+                onClick={() => setFeedBackPopup(true)}
+                className="flex bg-[#E5DFDF] px-4 py-2 items-center justify-start font-poppins font-medium text-lg text-black"
+              >
+                Review Feedbacks
+              </div>
             </div>
           </div>
         </div>
@@ -214,14 +198,6 @@ const ReviewerProjectDetails = () => {
           </div>
         </div>
       </div>
-      {/* Confirmation pop-up */}
-      {showConfirmation && (
-        <ConfirmationPopup
-          message="Are you sure you want to delete this project?"
-          onCancel={() => setShowConfirmation(false)} // Close the confirmation pop-up
-          onConfirm={handleDelete} // Call the handleDelete function on confirmation
-        />
-      )}
       {/* reviewer details pop-up */}
       {reviewerPopup && (
         <ReviewerPopUp
@@ -241,6 +217,19 @@ const ReviewerProjectDetails = () => {
         <StudentPopup
           student={selectedStudent}
           onCancel={() => setSelectedStudent(null)}
+        />
+      )}
+
+      {filesPopup && (
+        <FilePopup
+          projectNumber={project.projectNumber}
+          onCancel={() => setFilesPopup(false)}
+        />
+      )}
+      {feedBackPopup && (
+        <ProjectFeedback
+          project={project}
+          onCancel={() => setFeedBackPopup(false)}
         />
       )}
     </div>

@@ -6,7 +6,6 @@ import axios from "axios";
 const ReviewerProjectCards = () => {
   const [search, setSearch] = useState("");
   const [projects, setProjects] = useState([]);
-  const [searchCategory, setSearchCategory] = useState("by-number");
 
   //component to ftech projects from the database
   const fetchProjects = async () => {
@@ -28,17 +27,9 @@ const ReviewerProjectCards = () => {
 
   const searchProjects = async () => {
     try {
-      let endpoint = "projects";
-      if (searchCategory === "by-number") {
-        const projectNumber = search.trim();
-        endpoint = `projects/by-number/${projectNumber}`;
-      } else if (searchCategory === "by-domain") {
-        const projectDomain = search.trim();
-        endpoint = `projects/by-domain/${projectDomain}`;
-      } else if (searchCategory === "by-guide") {
-        const guide = search.trim();
-        endpoint = `projects/by-guide/${guide}`;
-      }
+      console.log(search);
+      const projectNumber = search.trim();
+      const endpoint = `projects/by-number/${projectNumber}`;
 
       const response = await axios.get(`http://localhost:4000/${endpoint}`);
       if (response.status === 200) {
@@ -64,15 +55,9 @@ const ReviewerProjectCards = () => {
         <div></div>
         <div className="flex flex-col gap-2">
           <div>
-            <select
-              className="px-2 py-1 bg-[#E5DFDF]  text-md rounded shadow-lg font-sanista"
-              onChange={(e) => setSearchCategory(e.target.value)}
-              value={searchCategory}
-            >
-              <option value="by-number">By Project Number</option>
-              <option value="by-domain">By Domain</option>
-              <option value="by-guide">By Guide</option>
-            </select>
+            <p className="text-gray-600 font-light">
+              Search using project numbers
+            </p>
           </div>
           <div className="flex flex-row">
             <div className="w-[400px] relative">
@@ -96,16 +81,19 @@ const ReviewerProjectCards = () => {
       </div>
       <div className="mt-[100px] grid grid-cols-3 gap-x-0 gap-y-6 px-10">
         {projects &&
-          projects.map((project) => (
-            <Link to={`${project.projectNumber}`} key={project.projectNumber}>
-              <div className="w-[400px] h-[4rem] flex flex-row justify-between items-center px-5 border bg-[#E5DFDF]  shadow-xl rounded-lg">
-                <h2 className="text-[25px] font-semibold font-poppins">
-                  {project.projectNumber}
-                </h2>
-                <img src={folder} alt="icon" className="w-[5rem] h-[5rem]" />
-              </div>
-            </Link>
-          ))}
+          projects.map((project) => {
+            console.log(project); // Add this line for debugging
+            return (
+              <Link to={`${project.projectNumber}`} key={project.projectNumber}>
+                <div className="w-[350px] h-[4rem] flex flex-row justify-between items-center px-5 border bg-[#E5DFDF]  shadow-xl rounded-lg">
+                  <h2 className="text-[25px] font-semibold font-poppins">
+                    {project.projectNumber}
+                  </h2>
+                  <img src={folder} alt="icon" className="w-[5rem] h-[5rem]" />
+                </div>
+              </Link>
+            );
+          })}
       </div>
     </div>
   );

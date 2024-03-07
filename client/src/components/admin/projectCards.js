@@ -79,15 +79,7 @@ const ProjectCards = () => {
         </div>
         <div className="flex flex-col gap-2">
           <div>
-            <select
-              className="px-2 py-1 bg-[#E5DFDF] text-sm rounded shadow font-sanista"
-              onChange={(e) => setSearchCategory(e.target.value)}
-              value={searchCategory}
-            >
-              <option value="by-number">By Project Number</option>
-              <option value="by-domain">By Domain</option>
-              <option value="by-guide">By Guide</option>
-            </select>
+            <p className="text-gray-600">Search using project numbers</p>
           </div>
           <div className="flex flex-row">
             <div className="w-[400px] relative">
