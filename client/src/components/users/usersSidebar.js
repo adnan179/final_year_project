@@ -25,6 +25,12 @@ const UserSidebar = ({ projectNumber }) => {
           Dashboard
         </Link>
         <Link
+          to={`/${userEmail}/user-dashboard/grades`}
+          className="flex text-xl text-white"
+        >
+          Grades & Feedbacks
+        </Link>
+        <Link
           to={`/${userEmail}/user-dashboard/announcements`}
           className="flex text-xl text-white"
         >

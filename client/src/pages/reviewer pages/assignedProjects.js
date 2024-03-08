@@ -37,7 +37,10 @@ const AssignedProjectsPage = () => {
       <div className="flex w-[20%] h-screen">
         <ReviewerSidebar />
       </div>
-      <div className="flex w-[80%] h-screen ">
+      <div className="flex flex-col w-[80%] h-screen ">
+        <div className="text-xl font-bold mb-5 pt-10 pl-10">
+          <h1>Assigned Projects</h1>
+        </div>
         <div className="flex flex-row w-full min-h-screen px-8 py-4 bg-white gap-2">
           {loading && (
             <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">

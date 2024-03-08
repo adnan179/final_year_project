@@ -23,6 +23,7 @@ import Dashboard from "./pages/users pages/dashboard";
 import AnnouncementsUserPage from "./pages/users pages/announcementsUserPage";
 
 import axios from "axios";
+import Grades from "./pages/users pages/grades";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -198,6 +199,10 @@ const App = () => {
           element={
             <ProtectedRoute element={<Dashboard />} requiredRole="user" />
           }
+        />
+        <Route
+          path="/:userEmail/user-dashboard/grades"
+          element={<ProtectedRoute element={<Grades />} requiredRole="user" />}
         />
         <Route
           path="/:userEmail/user-dashboard/announcements"

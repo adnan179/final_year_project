@@ -216,7 +216,7 @@ router.get("/by-number/:projectNumber", async (req, res) => {
       rollNumber: { $in: studentIds },
     });
 
-    res.json({ project, guide, students });
+    res.status(200).json({ project, guide, students });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

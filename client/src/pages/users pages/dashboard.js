@@ -67,6 +67,7 @@ const Dashboard = () => {
         );
         const data = response.data;
         setFiles(data.files);
+        console.log(files);
         setLoading(false);
         handlePopup("successfully fetched all files", "success");
       } catch (error) {
@@ -238,7 +239,7 @@ const Dashboard = () => {
           {/* headings */}
           <div className="grid grid-cols-6 gap-2 w-full text-gray-600 text-lg font-light font-poppins">
             <h2>File Name</h2>
-            <h2>Size</h2>
+            <h2>Size(kB)</h2>
             <h2>Uploaded by</h2>
             <h2>Uploaded at</h2>
             <h2>Type</h2>

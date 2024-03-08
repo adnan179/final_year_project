@@ -11,8 +11,11 @@ const AdminSidebar = () => {
       className="flex flex-col h-screen w-full justify-between items-center py-10 border-r-0
       rounded-sm shadow-md bg-[#981F2A]"
     >
-      <div className="w-[7rem] h-[7rem] rounded-full items-center mt-8">
-        <img src={profile} alt="profile pic" className="w-full h-full" />
+      <div className="flex flex-col gap-2">
+        <div className="w-[7rem] h-[7rem] rounded-full items-center mt-8">
+          <img src={profile} alt="profile pic" className="w-full h-full" />
+        </div>
+        <h2 className="text-white text-lg">Welcome Admin</h2>
       </div>
 
       <div className="flex flex-col mt-5 gap-5">

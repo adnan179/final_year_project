@@ -82,7 +82,7 @@ const ReviewerProjectCards = () => {
       <div className="mt-[100px] grid grid-cols-3 gap-x-0 gap-y-6 px-10">
         {projects &&
           projects.map((project) => {
-            console.log(project); // Add this line for debugging
+            console.log(project);
             return (
               <Link to={`${project.projectNumber}`} key={project.projectNumber}>
                 <div className="w-[350px] h-[4rem] flex flex-row justify-between items-center px-5 border bg-[#E5DFDF]  shadow-xl rounded-lg">
