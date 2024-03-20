@@ -111,18 +111,23 @@ const AnnouncementsAdmin = () => {
       </div>
       {/* announcements */}
       {filteredAnnouncements &&
-        filteredAnnouncements.map((a) => (
-          <div
-            key={a._id}
-            className="flex justify-between w-full bg-black/90 rounded px-4 py-4 shadow cursor-pointer"
-            onClick={() => handleAnnouncementClick(a)}
-          >
-            <h1 className="text-white font-semibold font-poppins">
-              {a.subject}
-            </h1>
-            <p className="text-gray-300 font-poppins text-sm">{a.date}</p>
-          </div>
-        ))}
+        filteredAnnouncements
+          .slice()
+          .reverse()
+          .map((a) => (
+            <div
+              key={a._id}
+              className="flex justify-between w-full bg-black/90 rounded px-4 py-4 shadow cursor-pointer"
+              onClick={() => handleAnnouncementClick(a)}
+            >
+              <h1 className="text-white font-semibold font-poppins">
+                {a.subject}
+              </h1>
+              <h1 className="text-white/50 font-poppins">
+                {new Date(a.date).toISOString().split("T")[0]}
+              </h1>
+            </div>
+          ))}
       {announcements.length === 0 && (
         <div className="flex flex-col justify-center items-center w-full h-full">
           <h1 className="text-xl text-black font-medium">
@@ -154,6 +159,10 @@ const AnnouncementsAdmin = () => {
             </div>
             <p className="text-sm text-gray-600 mb-4 mt-4">
               {selectedAnnouncement && selectedAnnouncement.date}
+            </p>
+            <p className="uppercase">
+              <span className="font-medium">To:</span>{" "}
+              {selectedAnnouncement && selectedAnnouncement.to}
             </p>
             <h2 className="text-xl font-semibold mb-4 mt-5">
               {selectedAnnouncement && selectedAnnouncement.subject}

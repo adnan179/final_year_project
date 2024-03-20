@@ -61,17 +61,23 @@ const UserAnnouncements = () => {
         />
       </div>
       {announcements &&
-        announcements.map((a) => (
-          <div
-            key={a._id}
-            className="flex justify-start w-full bg-black/90 rounded px-2 py-4 shadow cursor-pointer"
-            onClick={() => handleAnnouncementClick(a)}
-          >
-            <h1 className="text-white font-semibold font-poppins">
-              {a.subject}
-            </h1>
-          </div>
-        ))}
+        announcements
+          .slice()
+          .reverse()
+          .map((a) => (
+            <div
+              key={a._id}
+              className="flex justify-between w-full bg-black/90 rounded px-4 py-4 shadow cursor-pointer"
+              onClick={() => handleAnnouncementClick(a)}
+            >
+              <h1 className="text-white font-semibold font-poppins">
+                {a.subject}
+              </h1>
+              <h1 className="text-white font-semibold font-poppins">
+                {new Date(a.date).toISOString().split("T")[0]}
+              </h1>
+            </div>
+          ))}
 
       {/* Popup to display announcement details */}
       {selectedAnnouncement && (
@@ -89,7 +95,12 @@ const UserAnnouncements = () => {
             <p className="mb-4">
               {selectedAnnouncement && selectedAnnouncement.desc}
             </p>
-            <h2 className="mb-4 font-medium">Attachments:</h2>
+            {selectedAnnouncement &&
+              selectedAnnouncement.attachments.length > 0 && (
+                <h2 className="mb-4 font-medium text-[#981F2A]">
+                  {selectedAnnouncement.attachments.length} Attachments
+                </h2>
+              )}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {selectedAnnouncement.attachments &&
                 selectedAnnouncement.attachments.map((attachment, index) => (

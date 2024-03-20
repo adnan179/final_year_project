@@ -257,4 +257,34 @@ router.patch(
     }
   }
 );
+
+//router to send all domains available from all the reviewer's data
+router.get("/project/domains", async (req, res) => {
+  try {
+    // Retrieve reviewers from the database
+    const reviewers = await Reviewer.find();
+
+    // Initialize an array to store all unique domains
+    let allDomains = [];
+
+    // Loop through each reviewer
+    reviewers.forEach((reviewer) => {
+      // Loop through each domain of the reviewer
+      reviewer.domains.forEach((domain) => {
+        // Add domain to allDomains array if it's not already present
+        if (!allDomains.includes(domain)) {
+          allDomains.push(domain);
+        }
+      });
+    });
+
+    // Send the response with the unique domains
+    res.status(200).json(allDomains);
+  } catch (error) {
+    // Handle any errors that occur during the process
+    console.log("Error fetching domains from reviewers", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

@@ -148,9 +148,17 @@ const projectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Feedbacks: {
-    type: Array,
-    default: [],
+  Review1Feedbacks: {
+    type: String,
+    default: "",
+  },
+  Review2Feedbacks: {
+    type: String,
+    default: "",
+  },
+  Review3Feedbacks: {
+    type: String,
+    default: "",
   },
 });
 

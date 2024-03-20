@@ -107,18 +107,42 @@ const Grades = () => {
         </div>
         <div className="flex flex-col mt-5 gap-3">
           <h2 className="text-md font-medium">Feedbacks:</h2>
-          <div>
-            {project && project.Feedbacks ? (
-              project.Feedbacks.map((feed, index) => (
-                <p className="text-sm">
-                  <span className="font-medium">feedback-{index + 1}:</span>{" "}
-                  {feed}
-                </p>
-              ))
-            ) : (
-              <p className="text-md text-red-600">no feedbacks posted yet!</p>
-            )}
-          </div>
+          {project && (
+            <div>
+              {!project.Review1Feedbacks &&
+              !project.Review2Feedbacks &&
+              !project.Review3Feedbacks ? (
+                <p className="text-md text-red-600">no feedbacks posted yet!</p>
+              ) : (
+                <div>
+                  {project.Review1Feedbacks && (
+                    <p>
+                      <span className="font-medium">
+                        Project review-1 feedback:
+                      </span>{" "}
+                      {project.Review1Feedbacks}
+                    </p>
+                  )}
+                  {project.Review2Feedbacks && (
+                    <p>
+                      <span className="font-medium">
+                        Project review-2 feedback:
+                      </span>{" "}
+                      {project.Review2Feedbacks}
+                    </p>
+                  )}
+                  {project.Review3Feedbacks && (
+                    <p>
+                      <span className="font-medium">
+                        Project review-3 feedback:
+                      </span>{" "}
+                      {project.Review3Feedbacks}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

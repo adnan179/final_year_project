@@ -376,8 +376,8 @@ router.post("/update-review-dates", async (req, res) => {
   }
 });
 
-//router to update the feedbacks
-router.post("/:projectNumber/feedback", async (req, res) => {
+//router to update the review-1 feedbacks
+router.post("/:projectNumber/review1/feedback", async (req, res) => {
   try {
     const projectNumber = req.params.projectNumber;
     const feedText = req.body.feedText;
@@ -388,12 +388,54 @@ router.post("/:projectNumber/feedback", async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: "Project not found!!" });
     }
-    project.Feedbacks.push(feedText);
+    project.Review1Feedbacks = feedText;
     await project.save();
     res.status(200).json({ message: "Feedback submitted successfully" });
   } catch (err) {
     console.log("Error updating feedback", err);
-    res.status(500).message(err.message);
+    res.status(500).json(err.message);
+  }
+});
+
+//router to update the review-2 feedbacks
+router.post("/:projectNumber/review2/feedback", async (req, res) => {
+  try {
+    const projectNumber = req.params.projectNumber;
+    const feedText = req.body.feedText;
+    if (!projectNumber) {
+      return res.status(400).json({ message: "projectNumber is required" });
+    }
+    const project = await Project.findOne({ projectNumber: projectNumber });
+    if (!project) {
+      return res.status(404).json({ message: "Project not found!!" });
+    }
+    project.Review2Feedbacks = feedText;
+    await project.save();
+    res.status(200).json({ message: "Feedback submitted successfully" });
+  } catch (err) {
+    console.log("Error updating feedback", err);
+    res.status(500).json(err.message);
+  }
+});
+
+//router to update the review-3 feedbacks
+router.post("/:projectNumber/review3/feedback", async (req, res) => {
+  try {
+    const projectNumber = req.params.projectNumber;
+    const feedText = req.body.feedText;
+    if (!projectNumber) {
+      return res.status(400).json({ message: "projectNumber is required" });
+    }
+    const project = await Project.findOne({ projectNumber: projectNumber });
+    if (!project) {
+      return res.status(404).json({ message: "Project not found!!" });
+    }
+    project.Review3Feedbacks = feedText;
+    await project.save();
+    res.status(200).json({ message: "Feedback submitted successfully" });
+  } catch (err) {
+    console.log("Error updating feedback", err);
+    res.status(500).json(err.message);
   }
 });
 

@@ -426,7 +426,6 @@ export const GradeCardPopup = ({ project, students, onCancel }) => {
   const [reviewOne, setReviewOne] = useState(false); // 40 marks
   const [reviewTwo, setReviewTwo] = useState(false); // 30 marks
   const [reviewThree, setReviewThree] = useState(false); // 30 marks
-  const [feedBack, setFeedBack] = useState(false);
 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
@@ -465,7 +464,7 @@ export const GradeCardPopup = ({ project, students, onCancel }) => {
               </button>
             </div>
           )}
-          {!addGrade && !feedBack && (
+          {!addGrade && (
             <div className="overflow-x-auto">
               <table className="table-auto">
                 <thead>
@@ -525,19 +524,13 @@ export const GradeCardPopup = ({ project, students, onCancel }) => {
               </table>
             </div>
           )}
-          {!addGrade && !feedBack && (
+          {!addGrade && (
             <div className="flex flex-row gap-3">
               <button
                 onClick={() => setAddGrade(true)}
                 className="px-4 py-2 bg-[#981F2A] text-white transition duration-300 ease-in-out hover:scale-105 shadow-lg rounded"
               >
                 Update Grades
-              </button>
-              <button
-                onClick={() => setFeedBack(true)}
-                className="px-4 py-2 bg-[#981F2A] text-white transition duration-300 ease-in-out hover:scale-105 shadow-lg rounded"
-              >
-                Add Feedback
               </button>
               <button
                 onClick={() => onCancel()}
@@ -547,26 +540,23 @@ export const GradeCardPopup = ({ project, students, onCancel }) => {
               </button>
             </div>
           )}
-          {feedBack && (
-            <FeedBackCard
-              project={project}
-              onCancel={() => setFeedBack(false)}
-            />
-          )}
           {reviewOne && (
             <ReviewOneCard
+              project={project}
               students={students}
               onCancel={() => setReviewOne(false)}
             />
           )}
           {reviewTwo && (
             <ReviewTwoCard
+              project={project}
               students={students}
               onCancel={() => setReviewTwo(false)}
             />
           )}
           {reviewThree && (
             <ReviewThreeCard
+              project={project}
               students={students}
               onCancel={() => setReviewThree(false)}
             />
@@ -577,8 +567,8 @@ export const GradeCardPopup = ({ project, students, onCancel }) => {
   );
 };
 
-//popup to add new feedbacks
-export const FeedBackCard = ({ project, onCancel }) => {
+//popups to add new feedbacks
+export const Review1FeedBackCard = ({ project, onCancel }) => {
   const [feedText, setFeedText] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -588,7 +578,7 @@ export const FeedBackCard = ({ project, onCancel }) => {
       setLoading(true);
       console.log(feedText);
       const response = await axios.post(
-        `http://localhost:4000/projects/${project.projectNumber}/feedback`,
+        `http://localhost:4000/projects/${project.projectNumber}/review1/feedback`,
         { feedText: feedText }
       );
       if (response.status === 200) {
@@ -634,6 +624,121 @@ export const FeedBackCard = ({ project, onCancel }) => {
     </form>
   );
 };
+
+export const Review2FeedBackCard = ({ project, onCancel }) => {
+  const [feedText, setFeedText] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      console.log(feedText);
+      const response = await axios.post(
+        `http://localhost:4000/projects/${project.projectNumber}/review2/feedback`,
+        { feedText: feedText }
+      );
+      if (response.status === 200) {
+        handlePopup("successfully submitted the feedback", "success");
+        setLoading(false);
+        onCancel();
+      }
+    } catch (err) {
+      console.log("Error submitting project feedback", err);
+      handlePopup("Error submitting project feedback", "error");
+      setLoading(false);
+    }
+  };
+  if (loading) {
+    return (
+      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#981F2A]"></div>
+    );
+  }
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col justify-start items-center gap-2 px-4"
+    >
+      <h2 className="text-lg font-medium font-poppins">Feedback form</h2>
+      <textarea
+        maxLength={600}
+        placeholder="Enter the feedback"
+        onChange={(e) => setFeedText(e.target.value)}
+        value={feedText}
+        className="w-[400px] h-[200px] pt-2 pl-2 rounded shadow border outline-none focus:ring-1 focus:ring-[#981F2A]"
+      />
+      <div className="flex flex-row gap-3">
+        <button className="flex px-4 py-2 border border-[#981F2A] bg-white text-[#981F2A] transition duration-300 ease-in-out hover:bg-[#981F2A] hover:text-white shadow-lg rounded">
+          Submit
+        </button>
+        <button
+          onClick={() => onCancel()}
+          className="px-4 py-2 bg-[#981F2A] text-white transition duration-300 ease-in-out hover:scale-105 shadow-lg rounded"
+        >
+          Close
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export const Review3FeedBackCard = ({ project, onCancel }) => {
+  const [feedText, setFeedText] = useState();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      console.log(feedText);
+      const response = await axios.post(
+        `http://localhost:4000/projects/${project.projectNumber}/review3/feedback`,
+        { feedText: feedText }
+      );
+      if (response.status === 200) {
+        handlePopup("successfully submitted the feedback", "success");
+        setLoading(false);
+        onCancel();
+      }
+    } catch (err) {
+      console.log("Error submitting project feedback", err);
+      handlePopup("Error submitting project feedback", "error");
+      setLoading(false);
+    }
+  };
+  if (loading) {
+    return (
+      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#981F2A]"></div>
+    );
+  }
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col justify-start items-center gap-2 px-4"
+    >
+      <h2 className="text-lg font-medium font-poppins">Feedback form</h2>
+      <textarea
+        maxLength={600}
+        placeholder="Enter the feedback"
+        onChange={(e) => setFeedText(e.target.value)}
+        value={feedText}
+        className="w-[400px] h-[200px] pt-2 pl-2 rounded shadow border outline-none focus:ring-1 focus:ring-[#981F2A]"
+      />
+      <div className="flex flex-row gap-3">
+        <button className="flex px-4 py-2 border border-[#981F2A] bg-white text-[#981F2A] transition duration-300 ease-in-out hover:bg-[#981F2A] hover:text-white shadow-lg rounded">
+          Submit
+        </button>
+        <button
+          onClick={() => onCancel()}
+          className="px-4 py-2 bg-[#981F2A] text-white transition duration-300 ease-in-out hover:scale-105 shadow-lg rounded"
+        >
+          Close
+        </button>
+      </div>
+    </form>
+  );
+};
+
 //popup to check feedbacks of a project
 export const ProjectFeedback = ({ project, onCancel }) => {
   return (
@@ -643,15 +748,39 @@ export const ProjectFeedback = ({ project, onCancel }) => {
           <h2 className="font-bold text-xl">
             {project.projectNumber} Feedbacks
           </h2>
-          {!project.feedbacks && (
+          {!project.Review1Feedbacks &&
+          !project.Review2Feedbacks &&
+          !project.Review3Feedbacks ? (
             <p className="text-lg text-red-600">Feedbacks yet to be given!!</p>
+          ) : (
+            <div>
+              {project.Review1Feedbacks && (
+                <p>
+                  <span className="font-medium">
+                    Project review-1 feedback:
+                  </span>{" "}
+                  {project.Review1Feedbacks}
+                </p>
+              )}
+              {project.Review2Feedbacks && (
+                <p>
+                  <span className="font-medium">
+                    Project review-2 feedback:
+                  </span>{" "}
+                  {project.Review2Feedbacks}
+                </p>
+              )}
+              {project.Review3Feedbacks && (
+                <p>
+                  <span className="font-medium">
+                    Project review-3 feedback:
+                  </span>{" "}
+                  {project.Review3Feedbacks}
+                </p>
+              )}
+            </div>
           )}
-          {project.Feedbacks &&
-            project.Feedbacks.map((feedback, index) => (
-              <p key={index}>
-                feedback-{index + 1}: {feedback}
-              </p>
-            ))}
+
           <button
             onClick={() => onCancel()}
             className="flex px-4 py-2 border border-[#981F2A] text-[#981F2A] hover:bg-[#981F2A] hover:text-white transition ease-in-out duration-300 rounded shadow"
@@ -665,12 +794,13 @@ export const ProjectFeedback = ({ project, onCancel }) => {
 };
 
 //review-1 marks card
-export const ReviewOneCard = ({ students, onCancel }) => {
+export const ReviewOneCard = ({ project, students, onCancel }) => {
   // Initialize marks data state for each student
   const initialMarksData = students.map(() =>
     ReviewOneData.map(() => ({ marks: "" }))
   );
   const [marksData, setMarksData] = useState(initialMarksData);
+  const [feedback, setFeedback] = useState(false);
 
   // Function to handle changes in marks for a student
   const handleMarksChange = (studentIndex, itemIndex, marks) => {
@@ -791,12 +921,24 @@ export const ReviewOneCard = ({ students, onCancel }) => {
               Submit
             </button>
             <button
+              className="px-4 py-2 bg-[#981F2A] text-white font-medium rounded shadow hover:scale-105"
+              onClick={() => setFeedback(true)}
+            >
+              Add Feedback
+            </button>
+            <button
               className="px-4 py-2 text-[#981F2A] border border-[#981F2A] font-medium rounded shadow hover:bg-[#981F2A] hover:text-white"
               onClick={() => onCancel()}
             >
               Close
             </button>
           </div>
+          {feedback && (
+            <Review1FeedBackCard
+              project={project}
+              onCancel={() => setFeedback(false)}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -804,12 +946,13 @@ export const ReviewOneCard = ({ students, onCancel }) => {
 };
 
 //review-2 marks card
-export const ReviewTwoCard = ({ students, onCancel }) => {
+export const ReviewTwoCard = ({ project, students, onCancel }) => {
   // Initialize marks data state for each student
   const initialMarksData = students.map(() =>
     ReviewTwoData.map(() => ({ marks: "" }))
   );
   const [marksData, setMarksData] = useState(initialMarksData);
+  const [feedback, setFeedback] = useState(false);
 
   // Function to handle changes in marks for a student
   const handleMarksChange = (studentIndex, itemIndex, marks) => {
@@ -868,6 +1011,11 @@ export const ReviewTwoCard = ({ students, onCancel }) => {
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-100">
       <div className="bg-white p-5 rounded-lg shadow-lg">
         <div className="flex flex-col justify-center items-center gap-3">
+          {project.Review1Feedbacks ? (
+            <p>Review-1 Feedback: {project.Review1Feedbacks}</p>
+          ) : (
+            <p>Feedback: yet to be given </p>
+          )}
           <h2 className="text-lg text-black font-medium">Review-2 marks</h2>
           <div className="overflow-x-auto">
             <table className="table-auto text-xs border border-black">
@@ -930,12 +1078,24 @@ export const ReviewTwoCard = ({ students, onCancel }) => {
               Submit
             </button>
             <button
+              className="px-4 py-2 bg-[#981F2A] text-white font-medium rounded shadow hover:scale-105"
+              onClick={() => setFeedback(true)}
+            >
+              Add Feedback
+            </button>
+            <button
               className="px-4 py-2 text-[#981F2A] border border-[#981F2A] font-medium rounded shadow hover:bg-[#981F2A] hover:text-white"
               onClick={() => onCancel()}
             >
               Close
             </button>
           </div>
+          {feedback && (
+            <Review2FeedBackCard
+              project={project}
+              onCancel={() => setFeedback(false)}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -943,12 +1103,13 @@ export const ReviewTwoCard = ({ students, onCancel }) => {
 };
 
 //review-3 marks card
-export const ReviewThreeCard = ({ students, onCancel }) => {
+export const ReviewThreeCard = ({ project, students, onCancel }) => {
   // Initialize marks data state for each student
   const initialMarksData = students.map(() =>
     ReviewOneData.map(() => ({ marks: "" }))
   );
   const [marksData, setMarksData] = useState(initialMarksData);
+  const [feedback, setFeedback] = useState(false);
 
   // Function to handle changes in marks for a student
   const handleMarksChange = (studentIndex, itemIndex, marks) => {
@@ -1007,6 +1168,11 @@ export const ReviewThreeCard = ({ students, onCancel }) => {
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-gray-900 bg-opacity-50 z-100">
       <div className="bg-white p-5 rounded-lg shadow-lg">
         <div className="flex flex-col justify-center items-center gap-3">
+          {project.Review2Feedbacks ? (
+            <p>Review-2 Feedback: {project.Review2Feedbacks}</p>
+          ) : (
+            <p>Review-2 Feedback: yet to be given </p>
+          )}
           <h2 className="text-lg text-black font-medium">Review-3 marks</h2>
           <div className="overflow-x-auto">
             <table className="table-auto text-xs border border-black">
@@ -1069,12 +1235,24 @@ export const ReviewThreeCard = ({ students, onCancel }) => {
               Submit
             </button>
             <button
+              className="px-4 py-2 bg-[#981F2A] text-white font-medium rounded shadow hover:scale-105"
+              onClick={() => setFeedback(true)}
+            >
+              Add Feedback
+            </button>
+            <button
               className="px-4 py-2 text-[#981F2A] border border-[#981F2A] font-medium rounded shadow hover:bg-[#981F2A] hover:text-white"
               onClick={() => onCancel()}
             >
               Close
             </button>
           </div>
+          {feedback && (
+            <Review3FeedBackCard
+              project={project}
+              onCancel={() => setFeedback(false)}
+            />
+          )}
         </div>
       </div>
     </div>

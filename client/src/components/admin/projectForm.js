@@ -24,6 +24,7 @@ const ProjectDetailsForm = () => {
   const [guides, setGuides] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
+  const [domains, setDomains] = useState([]);
 
   useEffect(() => {
     //function to fetch all available guides and students for the project
@@ -38,10 +39,14 @@ const ProjectDetailsForm = () => {
         const projectNumbersData = await axios.get(
           "http://localhost:4000/projects/projectNumbers"
         );
+        const domainsData = await axios.get(
+          "http://localhost:4000/reviewers/project/domains"
+        );
 
         setGuides(guideData.data.guides);
         setStudents(studentData.data.students);
         setProjectNumbers(projectNumbersData.data.projectNumbers);
+        setDomains(domainsData.data);
       } catch (error) {
         console.log(
           "Error fetching project numbers, guides and students",
@@ -66,6 +71,19 @@ const ProjectDetailsForm = () => {
       handlePopup("Project number already exists", "error");
     }
   };
+  //function to add domain
+  const handleAddDomain = (e) => {
+    //checking if guide is already associated with this project or not
+    const selectedDomain = domains.find((domain) => domain === e.target.value);
+    setProject({ ...project, projectDomain: selectedDomain });
+    if (
+      project.guide &&
+      project.guide.projects.includes(project.projectNumber)
+    ) {
+      setProject({ ...project, guide: null });
+      handlePopup("Already associated with this project", "error");
+    }
+  };
 
   //function to add guide
   const handleAddGuide = (e) => {
@@ -81,6 +99,7 @@ const ProjectDetailsForm = () => {
     }
   };
 
+  //function to add student
   const handleAddStudent = () => {
     // Check if the maximum number of students is reached
     if (selectedStudents.length >= 4) {
@@ -90,6 +109,7 @@ const ProjectDetailsForm = () => {
     setSelectedStudents([...selectedStudents, "select student"]);
   };
 
+  //function to handle student changes
   const handleStudentChange = (value, index) => {
     // Check if the student is already added
     if (selectedStudents.includes(value)) {
@@ -101,12 +121,14 @@ const ProjectDetailsForm = () => {
     setSelectedStudents(updatedStudents);
   };
 
+  //function to delete the students
   const handleDeleteStudent = (index) => {
     const updatedStudents = [...selectedStudents];
     updatedStudents.splice(index, 1);
     setSelectedStudents(updatedStudents);
   };
 
+  //function to handle submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedStudents.length < 3) {
@@ -214,7 +236,7 @@ const ProjectDetailsForm = () => {
             <div className="inline-block w-full h-[1.5px] mt-2 bg-white px-4"></div>
             <div className="grid grid-cols-3 gap-3 mt-3">
               {/* Project Title */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <label
                   htmlFor="projectTitle"
                   className="text-white font-sanista text-lg font-medium"
@@ -232,7 +254,7 @@ const ProjectDetailsForm = () => {
                 />
               </div>
               {/* Project Number */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <label
                   htmlFor="projectNumber"
                   className="text-white font-sanista text-lg font-medium"
@@ -253,22 +275,33 @@ const ProjectDetailsForm = () => {
                 />
               </div>
               {/* Project Domain */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <label
                   htmlFor="projectDomain"
                   className="text-white font-sanista text-lg font-medium"
                 >
                   Domain
                 </label>
-                <input
-                  type="text"
-                  id="projectDomain"
-                  required
-                  placeholder="Enter the project domain"
-                  className="flex px-4 py-2 rounded outline-none shadow focus:ring-[#981F2A] focus:ring-3"
-                  value={project.projectDomain}
-                  onChange={handleProjectChange}
-                />
+                <select
+                  value="Select Domain"
+                  className="bg-[#E5DFDF] w-[60%] px-4 py-2 rounded"
+                  onChange={(e) => {
+                    handleAddDomain(e);
+                  }}
+                >
+                  <option value="">Select Domain</option>
+                  {domains.length > 0 &&
+                    domains.map((domain, index) => (
+                      <option value={domain} key={index}>
+                        {domain}
+                      </option>
+                    ))}
+                </select>
+                {project.projectDomain && (
+                  <p className="text-red-600 text-sm">
+                    Domain: {project.projectDomain}
+                  </p>
+                )}
               </div>
             </div>
             {/* Project Description */}
